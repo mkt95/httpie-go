@@ -62,6 +62,11 @@ var Licenses = []License{
 		LicenseName: "Unlicense",
 		Link:        "https://github.com/vbauerster/mpb/blob/master/UNLICENSE",
 	},
+	{
+		ModuleName:  "uuid",
+		LicenseName: "BSD License",
+		Link:        "https://github.com/google/uuid/blob/master/LICENSE",
+	},
 }
 
 func PrintLicenses(w io.Writer) {
