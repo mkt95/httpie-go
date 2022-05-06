@@ -56,6 +56,7 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 	var prettyFlag string
 	var versionFlag bool
 	var licenseFlag bool
+	var trackingIDFlag string
 
 	// Default value 20 is a bit too small for options of httpie-go.
 	getopt.HelpColumn = 22
@@ -81,6 +82,7 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 	flagSet.BoolVarLong(&exchangeOptions.FollowRedirects, "follow", 'F', "follow 30x Location redirects")
 	flagSet.BoolVarLong(&versionFlag, "version", 0, "print version and exit")
 	flagSet.BoolVarLong(&licenseFlag, "license", 0, "print license information and exit")
+	flagSet.StringVarLong(&trackingIDFlag, "trackingid", 'T', "trackingId sender")
 	flagSet.Parse(args)
 
 	// Check --version
@@ -155,6 +157,16 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 		exchangeOptions.Auth.Enabled = true
 		exchangeOptions.Auth.UserName = username
 		exchangeOptions.Auth.Password = *password
+	}
+
+	// Parse --trackingid
+	if trackingIDFlag != "" {
+		if len(trackingIDFlag) < 3 || len(trackingIDFlag) > 12 {
+			return nil, nil, nil, fmt.Errorf("%s", "TrackingID sender must be of length [3,12]")
+		}
+		trackingIDFlag = strings.ToUpper(trackingIDFlag)
+		inputOptions.TrackingID.Enabled = true
+		inputOptions.TrackingID.Sender = trackingIDFlag
 	}
 
 	optionSet := &OptionSet{

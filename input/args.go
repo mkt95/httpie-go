@@ -7,7 +7,9 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -77,6 +79,17 @@ func ParseArgs(args []string, stdin io.Reader, options *Options) (*Input, error)
 	state.preferredBodyType, err = determinePreferredBodyType(options)
 	if err != nil {
 		return nil, err
+	}
+
+	if options.TrackingID.Enabled {
+		uu, err := uuid.NewUUID()
+		if err != nil {
+			return nil, err
+		}
+		in.Header.Fields = append(in.Header.Fields, Field{
+			Name:   "TrackingID",
+			Value:  options.TrackingID.Sender + "_" + uu.String() + "_" + time.Now().Format("1504"),
+			IsFile: false})
 	}
 
 	for _, arg := range argItems {
