@@ -57,6 +57,7 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 	var versionFlag bool
 	var licenseFlag bool
 	var trackingIDFlag string
+	var ignoreConfig bool
 
 	// Default value 20 is a bit too small for options of httpie-go.
 	getopt.HelpColumn = 22
@@ -83,6 +84,7 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 	flagSet.BoolVarLong(&versionFlag, "version", 0, "print version and exit")
 	flagSet.BoolVarLong(&licenseFlag, "license", 0, "print license information and exit")
 	flagSet.StringVarLong(&trackingIDFlag, "trackingid", 'T', "trackingId sender")
+	flagSet.BoolVarLong(&ignoreConfig, "ignore-config", 0, "ignore config file")
 	flagSet.Parse(args)
 
 	// Check --version
@@ -95,6 +97,13 @@ func parse(args []string, terminalInfo terminalInfo) ([]string, Usage, *OptionSe
 	if licenseFlag {
 		version.PrintLicenses(os.Stderr)
 		os.Exit(0)
+	}
+
+	// Load defaults from config unless ignored
+	if !ignoreConfig {
+		// FIXME load from config; for now pretend this has been loaded from config :)
+		inputOptions.TrackingID.Enabled = true
+		inputOptions.TrackingID.Sender = "BAPPLE"
 	}
 
 	// Check stdin
